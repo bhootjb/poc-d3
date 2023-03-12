@@ -42,7 +42,14 @@ export const makeChartNode = (weatherData, threshold) => {
     return htl.svg`<svg viewBox='0 0 ${width} ${height}'>
       <path d='${line(weatherData)}' fill='none' stroke='#226398' stroke-width='1.5' stroke-miterlimit='1'></path>
       <path d='${line(thresholdData)}' fill='none' stroke='#d47024' stroke-width='1.5' stroke-miterlimit='1'></path>
-      ${weatherData.map(d => htl.svg`<circle cx='${x(d.date)}' cy='${y(d.value)}' r='2' fill='#226398'>`)}
+      ${weatherData.map(d => {
+          return htl.svg`<circle 
+            cx='${x(d.date)}'
+            cy='${y(d.value)}'
+            r='2'
+            fill='#226398'
+            onmouseover=${ev => console.log(ev)}>`
+      })}
       ${d3.select(htl.svg`<g>`).call(xAxis).node()}
       ${d3.select(htl.svg`<g>`).call(yAxis).node()}
     </svg>`;
