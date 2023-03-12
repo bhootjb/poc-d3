@@ -5,4 +5,4 @@ Goals
   - [ ] Render legend too?
   - [ ] Check transitions on change in inputs
   - [ ] What else?
-- [ ] Verify that puppeteer can render the chart in a pdf
+- [x] Verify that puppeteer can render the chart in a pdf

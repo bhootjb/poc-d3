@@ -1,7 +1,9 @@
 {
+  "type": "module",
   "dependencies": {
     "d3": "^7.8.2",
-    "htl": "^0.3.1"
+    "htl": "^0.3.1",
+    "puppeteer": "^19.7.4"
   },
   "name": "poc-d3js",
   "version": "1.0.0",
@@ -12,6 +14,7 @@
   },
   "scripts": {
     "build": "esbuild --bundle index.js --outfile=build.js",
-    "dev": "ls index.html index.js | entr -s 'npm run build'",
+    "build:watch": "ls index.html *.js | grep --invert-match --regexp='build.js' | entr -s 'npm run build'",
+    "pdf": "PUPPETEER_EXECUTABLE_PATH='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' node pdf.js"
   }
 }
