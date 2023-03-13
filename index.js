@@ -1,6 +1,6 @@
-import rawData from './data';
 import * as d3 from 'd3';
 import * as htl from 'htl';
+import rawData from './data';
 
 export const compress = (yearlyData) => {
     return {
@@ -39,17 +39,61 @@ export const makeChartNode = (weatherData, threshold) => {
         .call(d3.axisLeft(y).ticks(height / 40))
         .call(g => g.select('.domain').remove());
 
+    const onMouseMoveOnHistoricalWeatherDataCircle = (ev, d) => {
+        d3.select('.tooltip')
+            .style('opacity', 1)
+            .style('left', `${ev.pageX}px`)
+            .style('top', `${ev.pageY}px`)
+            .html(`<dl>
+                        <div>
+                            <dt>Date:</dt>
+                            <dd>${d.date.getFullYear()}</dd>
+                        </div>
+                        <div>
+                            <dt>Value</dt>
+                            <dd>${d.value}</dd>
+                        </div>
+                      </dl>`);
+    };
+    const onMouseMoveOnThresholdLine = ev => {
+        // https://github.com/d3/d3-array#bisectCenter
+        const xPosRelative = d3.pointer(ev)[0];
+        const dateAtXPos = x.invert(xPosRelative);
+        const dateArr = thresholdData.map(td => td.date).sort();
+        const indexOfDataPointInThresholdDataSeriesClosestToDateAtXPos = d3.bisectCenter(dateArr, dateAtXPos);
+        const dataPointInThresholdDataSeriesClosestToDateAtXPos = thresholdData[indexOfDataPointInThresholdDataSeriesClosestToDateAtXPos];
+        if (dataPointInThresholdDataSeriesClosestToDateAtXPos) {
+            d3.select('.tooltip')
+                .style('opacity', 1)
+                .style('left', `${ev.pageX}px`)
+                .style('top', `${ev.pageY}px`)
+                .html(`<dl>
+                        <dt>Threshold:</dt>
+                        <dd>${dataPointInThresholdDataSeriesClosestToDateAtXPos.value}</dd>
+                   </dl>`);
+        }
+    };
+    const onMouseOut = _ => {
+        d3.select('.tooltip').style('opacity', 0);
+    };
+
     return htl.svg`<svg viewBox='0 0 ${width} ${height}'>
       <path d='${line(weatherData)}' fill='none' stroke='#226398' stroke-width='1.5' stroke-miterlimit='1'></path>
-      <path d='${line(thresholdData)}' fill='none' stroke='#d47024' stroke-width='1.5' stroke-miterlimit='1'></path>
-      ${weatherData.map(d => {
-          return htl.svg`<circle 
+      
+      <path 
+        d='${line(thresholdData)}' 
+        fill='none' stroke='#d47024' 
+        stroke-width='1.5' stroke-miterlimit='1'
+        onmousemove=${onMouseMoveOnThresholdLine}
+        onmouseout=${onMouseOut}></path>
+        
+      ${weatherData.map(d => htl.svg`<circle 
             cx='${x(d.date)}'
             cy='${y(d.value)}'
             r='2'
             fill='#226398'
-            onmouseover=${ev => console.log(ev)}>`
-      })}
+            onmousemove=${(ev) => onMouseMoveOnHistoricalWeatherDataCircle(ev, d)}
+            onmouseout=${onMouseOut}>`)}
       ${d3.select(htl.svg`<g>`).call(xAxis).node()}
       ${d3.select(htl.svg`<g>`).call(yAxis).node()}
     </svg>`;

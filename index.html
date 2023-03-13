@@ -2,10 +2,33 @@
 <html lang='en'>
 <head>
     <title>POC for d3.js</title>
+    <style>
+        :root {
+            --border-radius-small: 0.25rem;
+            --s-6: 0.5rem;
+        }
+
+        * {
+            margin: 0;
+        }
+
+        .tooltip {
+            position: absolute;
+            pointer-events: none;
+
+            background: #000;
+            color: #fff;
+
+            border-radius: var(--border-radius-small);
+            padding: var(--s-6);
+        }
+    </style>
 </head>
 <body>
     <h1>POC - d3.js</h1>
-    <div id='chart'></div>
+    <div id='chart'>
+        <div class='tooltip' style='opacity: 0'>Yo yo!</div>
+    </div>
     <script src='build.js'></script>
 </body>
 </html>
