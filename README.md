@@ -4,10 +4,10 @@ Goals
   - [x] Plot weather data as a line
   - [x] Plot threshold as a line
   - [x] datapoint circles on weather data line
-  - [ ] Tooltips on hover
-  - [ ] subtle axes lines
-  - [ ] subtle grid lines
-  - [ ] subtle tick colour
+  - [x] Tooltip on hover on both lines
+  - [x] subtle axes lines
+  - [x] subtle grid lines
+  - [x] subtle tick colour
   - [ ] Legend
   - [ ] Check transitions on change in inputs
   - [ ] Test all workflows

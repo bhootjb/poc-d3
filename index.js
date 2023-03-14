@@ -31,13 +31,22 @@ export const makeChartNode = (weatherData, threshold) => {
         .y(d => y(d.value));
 
     const xAxis = g => g
-        .attr('transform', `translate(0,${height - margin.bottom})`)
-        .call(d3.axisBottom(x).ticks(width / 80).tickSizeOuter(0));
+        .attr('transform', `translate(0, ${height - margin.bottom})`)
+        .style('color', '#dcdcdc')
+        .call(d3
+            .axisBottom(x)
+            .ticks(width / 80)
+            .tickSize(-(height - margin.top - margin.bottom))
+            .tickSizeOuter(0));
 
     const yAxis = g => g
-        .attr('transform', `translate(${margin.left},0)`)
-        .call(d3.axisLeft(y).ticks(height / 40))
-        .call(g => g.select('.domain').remove());
+        .attr('transform', `translate(${margin.left - 10}, 0)`)
+        .style('color', '#dcdcdc')
+        .call(d3
+            .axisLeft(y)
+            .ticks(height / 40)
+            .tickSize(-(width - margin.left - margin.right))
+            .tickSizeOuter(0));
 
     const onMouseMoveOnHistoricalWeatherDataCircle = (ev, d) => {
         d3.select('.tooltip')
@@ -56,7 +65,11 @@ export const makeChartNode = (weatherData, threshold) => {
                       </dl>`);
     };
     const onMouseMoveOnThresholdLine = ev => {
+        // refs:
+        // https://d3-graph-gallery.com/graph/line_cursor.html
+        // https://observablehq.com/@d3/line-with-tooltip
         // https://github.com/d3/d3-array#bisectCenter
+        // https://gramener.github.io/d3js-playbook/tooltips.html
         const xPosRelative = d3.pointer(ev)[0];
         const dateAtXPos = x.invert(xPosRelative);
         const dateArr = thresholdData.map(td => td.date).sort();
@@ -78,6 +91,9 @@ export const makeChartNode = (weatherData, threshold) => {
     };
 
     return htl.svg`<svg viewBox='0 0 ${width} ${height}'>
+      ${d3.select(htl.svg`<g>`).call(xAxis).node()}
+      ${d3.select(htl.svg`<g>`).call(yAxis).node()}
+      
       <path d='${line(weatherData)}' fill='none' stroke='#226398' stroke-width='1.5' stroke-miterlimit='1'></path>
       
       <path 
@@ -90,12 +106,10 @@ export const makeChartNode = (weatherData, threshold) => {
       ${weatherData.map(d => htl.svg`<circle 
             cx='${x(d.date)}'
             cy='${y(d.value)}'
-            r='2'
+            r='3'
             fill='#226398'
             onmousemove=${(ev) => onMouseMoveOnHistoricalWeatherDataCircle(ev, d)}
-            onmouseout=${onMouseOut}>`)}
-      ${d3.select(htl.svg`<g>`).call(xAxis).node()}
-      ${d3.select(htl.svg`<g>`).call(yAxis).node()}
+            onmouseout=${onMouseOut}>`)}  
     </svg>`;
 };
 document.addEventListener('DOMContentLoaded', () => {
